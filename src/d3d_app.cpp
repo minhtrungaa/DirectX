@@ -1,6 +1,6 @@
 #include "..\include\d3d_app.h"
 
-void D3DApplication::init3D(HWND hWnd)
+void D3DApplication::init3D(HWND hWnd, int nScreenWidth, int nScreenHeight)
 {
 	// Init D3D
 	// create a struct to hold information about the swap chain
@@ -12,10 +12,16 @@ void D3DApplication::init3D(HWND hWnd)
 	// fill the swap chain description struct
 	scd.BufferCount = 1;                                    // one back buffer
 	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;     // use 32-bit color
+	
+	// toggling between full screen and window
+	scd.BufferDesc.Width = nScreenWidth;
+	scd.BufferDesc.Height = nScreenHeight;
+	
 	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // how swap chain is to be used
 	scd.OutputWindow = hWnd;                                // the window to be used
 	scd.SampleDesc.Count = 4;                               // how many multisamples simply AA
 	scd.Windowed = TRUE;                                    // windowed/full-screen mode
+	scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;		// allow full-screen switching
 
 	// create a device, device context and swap chain using the information in the scd struct
 	D3D11CreateDeviceAndSwapChain(NULL,
@@ -61,6 +67,9 @@ void D3DApplication::init3D(HWND hWnd)
 
 void D3DApplication::clean3D(void)
 {
+	// force to be window to propperly release COMs
+	m_pSwapchain->SetFullscreenState(FALSE, NULL);
+
 	m_pSwapchain->Release();
 	m_pDevice->Release();
 	m_pDevContext->Release();

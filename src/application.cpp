@@ -46,7 +46,7 @@ int Application::Run(int nWidth, int nHeight, char* cpWindowTitle)
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = m_hInstance;
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
+	// wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
 	wc.lpszClassName = "MainWnd";
 
 	// register the window class
@@ -61,8 +61,8 @@ int Application::Run(int nWidth, int nHeight, char* cpWindowTitle)
 		"MainWnd",    // name of the window class
 		cpWindowTitle,   // title of the window
 		WS_OVERLAPPEDWINDOW,    // window style
-		300,    // x-position of the window
-		200,    // y-position of the window
+		240,    // x-position of the window
+		93,    // y-position of the window
 		wr.right - wr.left,    // width of the window after adjust overlap border
 		wr.bottom - wr.top,    // height of the window after adjust overlap border
 		NULL,    // we have no parent window, NULL
@@ -73,7 +73,7 @@ int Application::Run(int nWidth, int nHeight, char* cpWindowTitle)
 				  // display the window on the screen
 	ShowWindow(m_hWND, m_nCmdShow);
 
-	m_pD3DApp->init3D(m_hWND);
+	m_pD3DApp->init3D(m_hWND, nWidth, nHeight);
 
 	// enter the main loop:
 

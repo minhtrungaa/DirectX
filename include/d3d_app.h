@@ -7,7 +7,7 @@
 class D3DApplication
 {
 public:
-	void init3D(HWND hWnd);	// setup Direct3D driver
+	void init3D(HWND hWnd, int nScreenWidth = -1, int nScreenHeight = -1);	// setup Direct3D driver
 	void clean3D(void);	// release the Direct3D driver
 	void renderFrame(void); // render single frame using the backbuffer to render to viewport
 

@@ -6,5 +6,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	Application App;
 	App.Init(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
-	return App.Run(1280, 720, "My Window title");
+	return App.Run(1440, 900, "My Window title");
 }
