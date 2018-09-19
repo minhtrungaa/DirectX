@@ -24,6 +24,8 @@ void Application::Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmd
 
 	m_hInstance = hInstance;
 	m_nCmdShow = nCmdShow;
+
+	m_pD3DApp = new D3DApplication();
 }
 
 int Application::Run(int nWidth, int nHeight, char* cpWindowTitle)
@@ -69,6 +71,8 @@ int Application::Run(int nWidth, int nHeight, char* cpWindowTitle)
 				  // display the window on the screen
 	ShowWindow(m_hWND, m_nCmdShow);
 
+	m_pD3DApp->init3D(m_hWND);
+
 	// enter the main loop:
 
 	// this struct holds Windows event messages
@@ -103,7 +107,11 @@ int Application::Run(int nWidth, int nHeight, char* cpWindowTitle)
 		}
 
 		// TODO: Update game loop here
+		m_pD3DApp->renderFrame();
 	}
+
+	m_pD3DApp->clean3D();
+	delete m_pD3DApp;
 
 	// return this part of the WM_QUIT message to Windows
 	return msg.wParam;
