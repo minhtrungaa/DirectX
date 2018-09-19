@@ -26,6 +26,8 @@ void Application::Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmd
 	m_nCmdShow = nCmdShow;
 
 	m_pD3DApp = new D3DApplication();
+
+	m_bRequestQuit = false;
 }
 
 int Application::Run(int nWidth, int nHeight, char* cpWindowTitle)
@@ -90,7 +92,7 @@ int Application::Run(int nWidth, int nHeight, char* cpWindowTitle)
 	//}
 
 	// enter Application loop
-	while (true) // TODO: Using variable and set it to false when comes to exit the loop/application
+	while (!m_bRequestQuit) // TODO: Using variable and set it to false when comes to exit the loop/application
 	{
 		// check event by using PeekMessage
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -103,7 +105,7 @@ int Application::Run(int nWidth, int nHeight, char* cpWindowTitle)
 
 			// check to see if it's time to quit
 			if (msg.message == WM_QUIT)
-				break;
+				m_bRequestQuit = true;
 		}
 
 		// TODO: Update game loop here

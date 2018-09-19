@@ -23,4 +23,6 @@ private:
 	HINSTANCE m_hPrevInstance;	// Not using
 	LPSTR m_lpCmdLine;	// Not using
 	int m_nCmdShow;
+
+	bool m_bRequestQuit;
 };
