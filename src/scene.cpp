@@ -7,7 +7,7 @@ void Scene::Init()
 
 void Scene::Update(unsigned __int32 dt)
 {
-	printf("SCENE UPDATE\n");
+	//printf("SCENE UPDATE\n");
 }
 
 void Scene::Render()

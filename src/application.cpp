@@ -1,6 +1,73 @@
 #include "application.h"
 #include <stdio.h>
 
+ID3D11InputLayout *pLayout;            // the pointer to the input layout
+ID3D11VertexShader *pVS;               // the pointer to the vertex shader
+ID3D11PixelShader *pPS;                // the pointer to the pixel shader
+ID3D11Buffer *pVBuffer;                // the pointer to the vertex buffer
+
+									   // a struct to define a single vertex
+struct VERTEX { FLOAT X, Y, Z; D3DXCOLOR Color; };
+
+// this is the function that creates the shape to render
+void InitGraphics()
+{
+	// create a triangle using the VERTEX struct
+	// TODO: read vertex from file here
+	VERTEX OurVertices[] =
+	{
+		{ 0.0f, 0.5f, 0.0f, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f) },
+		{ 0.45f, -0.5, 0.0f, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f) },
+		{ -0.45f, -0.5f, 0.0f, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f) }
+	};
+
+
+	// create the vertex buffer
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+
+	bd.Usage = D3D11_USAGE_DYNAMIC;                // write access access by CPU and GPU
+	bd.ByteWidth = sizeof(VERTEX) * 3;             // size is the VERTEX struct * 3
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;       // use as a vertex buffer
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;    // allow CPU to write in buffer
+
+	D3DApplication::m_pDevice->CreateBuffer(&bd, NULL, &pVBuffer);       // create the buffer
+
+
+												   // copy the vertices into the buffer
+	D3D11_MAPPED_SUBRESOURCE ms;
+	D3DApplication::m_pDevContext->Map(pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);    // map the buffer
+	memcpy(ms.pData, OurVertices, sizeof(OurVertices));                 // copy the data
+	D3DApplication::m_pDevContext->Unmap(pVBuffer, NULL);                                      // unmap the buffer
+}
+
+
+// this function loads and prepares the shaders
+void InitPipeline()
+{
+	// load and compile the two shaders
+	ID3D10Blob *VS, *PS;
+	D3DX11CompileFromFile("shaders\\shader.shader", 0, 0, "VShader", "vs_5_0", 0, 0, 0, &VS, 0, 0);
+	D3DX11CompileFromFile("shaders\\shader.shader", 0, 0, "PShader", "ps_5_0", 0, 0, 0, &PS, 0, 0);
+
+	// encapsulate both shaders into shader objects
+	D3DApplication::m_pDevice->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &pVS);
+	D3DApplication::m_pDevice->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &pPS);
+
+	// set the shader objects
+	D3DApplication::m_pDevContext->VSSetShader(pVS, 0, 0);
+	D3DApplication::m_pDevContext->PSSetShader(pPS, 0, 0);
+
+	// create the input layout object
+	D3D11_INPUT_ELEMENT_DESC ied[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	D3DApplication::m_pDevice->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
+	D3DApplication::m_pDevContext->IASetInputLayout(pLayout);
+}
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	// sort through and find what code to run for the message given
@@ -79,7 +146,10 @@ int Application::Run(int nWidth, int nHeight, char* cpWindowTitle)
 	freopen("CON", "w", stdout);
 
 
-	m_pD3DApp->init3D(m_hWND, nWidth, nHeight);
+	//m_pD3DApp->init3D(m_hWND, nWidth, nHeight);
+	D3DApplication::init3D(m_hWND, nWidth, nHeight);
+	InitPipeline();
+	InitGraphics();
 
 	// enter the main loop:
 
@@ -121,13 +191,33 @@ int Application::Run(int nWidth, int nHeight, char* cpWindowTitle)
 
 		// TODO: Update game loop here
 		//m_pD3DApp->renderFrame();
-		m_pD3DApp->clearFrame();
+		//m_pD3DApp->clearFrame();
+		D3DApplication::clearFrame();
 		m_pScene->Render();
-		m_pD3DApp->swapBuffer();
+
+		// select which vertex buffer to display
+		UINT stride = sizeof(VERTEX);
+		UINT offset = 0;
+		D3DApplication::m_pDevContext->IASetVertexBuffers(0, 1, &pVBuffer, &stride, &offset);
+
+		// select which primtive type we are using
+		D3DApplication::m_pDevContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		// draw the vertex buffer to the back buffer
+		D3DApplication::m_pDevContext->Draw(3, 0);
+
+		//m_pD3DApp->swapBuffer();
+		D3DApplication::swapBuffer();
 	}
 
-	m_pD3DApp->clean3D();
-	delete m_pD3DApp;
+	D3DApplication::clean3D();
+	//m_pD3DApp->clean3D();
+	//delete m_pD3DApp;
+
+	pLayout->Release();
+	pVS->Release();
+	pPS->Release();
+	pVBuffer->Release();
 
 	delete m_pScene;
 

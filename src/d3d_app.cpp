@@ -1,4 +1,16 @@
-#include "..\include\d3d_app.h"
+#include "d3d_app.h"
+
+// the pointer to the swap chain interface
+IDXGISwapChain* D3DApplication::m_pSwapchain;
+
+// the pointer to our Direct3D device interface
+ID3D11Device* D3DApplication::m_pDevice;
+
+// the pointer to our Direct3D device context
+ID3D11DeviceContext* D3DApplication::m_pDevContext;
+
+// back buffer for swap chain
+ID3D11RenderTargetView* D3DApplication::m_pBackBuffer;
 
 void D3DApplication::init3D(HWND hWnd, int nScreenWidth, int nScreenHeight)
 {
