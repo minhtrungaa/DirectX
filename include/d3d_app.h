@@ -1,0 +1,3 @@
+/*
+	Handle Direct X init pipe line
+*/
