@@ -119,10 +119,14 @@
     <ClCompile Include="..\src\application.cpp" />
     <ClCompile Include="..\src\d3d_app.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\main_scene.cpp" />
+    <ClCompile Include="..\src\scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\application.h" />
     <ClInclude Include="..\include\d3d_app.h" />
+    <ClInclude Include="..\include\main_scene.h" />
+    <ClInclude Include="..\include\scene.h" />
     <ClInclude Include="..\include\stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

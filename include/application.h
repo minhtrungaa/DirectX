@@ -1,3 +1,4 @@
+#pragma once
 /*
 	Handle the window respond to create a window and init DirectX
 	TODO: later support OpenGL/Vulkan
@@ -5,6 +6,7 @@
 
 #include "stdafx.h"
 #include "d3d_app.h"
+#include "scene.h"
 
 class Application
 {
@@ -15,8 +17,10 @@ public:
 		LPSTR lpCmdLine, int nCmdShow);
 	int Run(int nWidth, int nHeight, char* cpWindowTitle);
 	HWND& getHWND();
+	void setStartUpScene(Scene* pScene);
 
 private:
+	Scene* m_pScene;
 	D3DApplication* m_pD3DApp;
 	HWND m_hWND;
 	HINSTANCE m_hInstance;

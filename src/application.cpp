@@ -1,4 +1,5 @@
 #include "application.h"
+#include <stdio.h>
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -73,6 +74,11 @@ int Application::Run(int nWidth, int nHeight, char* cpWindowTitle)
 				  // display the window on the screen
 	ShowWindow(m_hWND, m_nCmdShow);
 
+	AllocConsole();
+	AttachConsole(GetCurrentProcessId());
+	freopen("CON", "w", stdout);
+
+
 	m_pD3DApp->init3D(m_hWND, nWidth, nHeight);
 
 	// enter the main loop:
@@ -91,6 +97,8 @@ int Application::Run(int nWidth, int nHeight, char* cpWindowTitle)
 	//	DispatchMessage(&msg);
 	//}
 
+	m_pScene->Init();
+
 	// enter Application loop
 	while (!m_bRequestQuit) // TODO: Using variable and set it to false when comes to exit the loop/application
 	{
@@ -108,12 +116,20 @@ int Application::Run(int nWidth, int nHeight, char* cpWindowTitle)
 				m_bRequestQuit = true;
 		}
 
+		m_pScene->Scene::Update(0);
+		m_pScene->Update(0);
+
 		// TODO: Update game loop here
-		m_pD3DApp->renderFrame();
+		//m_pD3DApp->renderFrame();
+		m_pD3DApp->clearFrame();
+		m_pScene->Render();
+		m_pD3DApp->swapBuffer();
 	}
 
 	m_pD3DApp->clean3D();
 	delete m_pD3DApp;
+
+	delete m_pScene;
 
 	// return this part of the WM_QUIT message to Windows
 	return msg.wParam;
@@ -122,4 +138,9 @@ int Application::Run(int nWidth, int nHeight, char* cpWindowTitle)
 HWND & Application::getHWND()
 {
 	return m_hWND;
+}
+
+void Application::setStartUpScene(Scene * pScene)
+{
+	m_pScene = pScene;
 }

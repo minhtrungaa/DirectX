@@ -86,3 +86,15 @@ void D3DApplication::renderFrame(void)
 	// switching back buffer and front
 	m_pSwapchain->Present(0, 0);
 }
+
+void D3DApplication::clearFrame(void)
+{
+	// clear the previous frame with color
+	m_pDevContext->ClearRenderTargetView(m_pBackBuffer, D3DXCOLOR(0.0f, 0.2f, 0.4f, 1.0f));
+}
+
+void D3DApplication::swapBuffer(void)
+{
+	// switching back buffer and front
+	m_pSwapchain->Present(0, 0);
+}
